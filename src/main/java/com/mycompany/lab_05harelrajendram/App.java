@@ -25,6 +25,9 @@ public class App extends Application {
     public void start(Stage stage) {
         
         GridPane grid = new GridPane();
+        
+        grid.setHgap(10);
+        grid.setVgap(10);
         String[] bags = {"Full Decorative", "Beaded", "Pirate Design",
         "Fringed", "Leather", "Plain"};
         
@@ -41,9 +44,9 @@ public class App extends Application {
         Button orderBtn = new Button();
         Button clearBtn = new Button();
         
-        RadioButton size1 = new RadioButton();
-        RadioButton size2 = new RadioButton();
-        RadioButton size3 = new RadioButton();
+        RadioButton size1 = new RadioButton("Small");
+        RadioButton size2 = new RadioButton("Medium");
+        RadioButton size3 = new RadioButton("Large");
         
         ToggleGroup group = new ToggleGroup();
         group.getToggles().addAll(size1,size2,size3);
@@ -57,12 +60,24 @@ public class App extends Application {
         
         grid.add(numList, 2, 3);
         
-        
         orderBtn.setOnAction(e -> {
-            System.out.println("You ordered " + amount + bagType);
+            if (size1.isSelected()) {
+                statusLabel.setText("You ordered " + amount + " Small" + bagType);
+            }
+            if (size2.isSelected()) {
+                statusLabel.setText("You ordered " + amount + " Medium"+ bagType);
+            }
+            if (size3.isSelected()) {
+                statusLabel.setText("You ordered " + amount + " Large" + bagType);
+            }
+            
         });
         
-        Scene scene = new Scene(grid,300,400);
+        clearBtn.setOnAction(e -> {
+        
+        });
+        
+        Scene scene = new Scene(grid,300,300);
        
         stage.setScene(scene);
         stage.show();
