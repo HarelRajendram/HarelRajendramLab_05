@@ -65,10 +65,10 @@ public class App extends Application {
              String bagType = bag.getSelectionModel().getSelectedItem();
              
             if (size1.isSelected()) {
-                statusLabel.setText("You ordered " + amount + " Small" + bagType);
+                statusLabel.setText("You ordered " + amount + " Small " + bagType);
             }
             if (size2.isSelected()) {
-                statusLabel.setText("You ordered " + amount + " Medium"+ bagType);
+                statusLabel.setText("You ordered " + amount + " Medium "+ bagType);
             }
             if (size3.isSelected()) {
                 statusLabel.setText("You ordered " + amount + " Large " + bagType);
