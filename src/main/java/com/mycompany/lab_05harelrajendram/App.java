@@ -20,10 +20,10 @@ import javafx.stage.Stage;
  * JavaFX App
  */
 public class App extends Application {
-    Label statusLabel = new Label();
+    
     @Override
     public void start(Stage stage) {
-        
+        Label statusLabel = new Label();
         GridPane grid = new GridPane();
         
         grid.setHgap(10);
@@ -35,32 +35,35 @@ public class App extends Application {
         
         ListView<String> bag = new ListView<>(bagList);
         
-        String bagType = bag.getSelectionModel().getSelectedItem();
-        
         ComboBox<String> numList = new ComboBox<>();
         numList.getItems().addAll("1","2","3","4","5","6","7","8","9","10");
-        String amount = numList.getValue();
+       
         
-        Button orderBtn = new Button();
-        Button clearBtn = new Button();
+        Button orderBtn = new Button("Order");
+        Button clearBtn = new Button("Clear");
         
         RadioButton size1 = new RadioButton("Small");
         RadioButton size2 = new RadioButton("Medium");
         RadioButton size3 = new RadioButton("Large");
         
         ToggleGroup group = new ToggleGroup();
-        group.getToggles().addAll(size1,size2,size3);
+        group.getToggles().add(size1);
+        group.getToggles().add(size2);
+        group.getToggles().add(size3);
         
-        grid.add(orderBtn,0,0);
-        grid.add(clearBtn,0,1);
+        grid.add(orderBtn,5,3);
+        grid.add(clearBtn,6,3);
         
         grid.add(size1,1,0);
-        grid.add(size2,1,0);
-        grid.add(size3,1,0);
+        grid.add(size2,2,0);
+        grid.add(size3,3,0);
         
-        grid.add(numList, 2, 3);
+        grid.add(numList, 1, 3);
         
         orderBtn.setOnAction(e -> {
+             String amount = numList.getValue();
+             String bagType = bag.getSelectionModel().getSelectedItem();
+             
             if (size1.isSelected()) {
                 statusLabel.setText("You ordered " + amount + " Small" + bagType);
             }
@@ -68,16 +71,18 @@ public class App extends Application {
                 statusLabel.setText("You ordered " + amount + " Medium"+ bagType);
             }
             if (size3.isSelected()) {
-                statusLabel.setText("You ordered " + amount + " Large" + bagType);
+                statusLabel.setText("You ordered " + amount + " Large " + bagType);
             }
             
         });
+        grid.add(bag, 0, 0);
+        grid.add(statusLabel,0,4);
         
         clearBtn.setOnAction(e -> {
-        
+        statusLabel.setText("Selected: None");
         });
         
-        Scene scene = new Scene(grid,300,300);
+        Scene scene = new Scene(grid,600,600);
        
         stage.setScene(scene);
         stage.show();
