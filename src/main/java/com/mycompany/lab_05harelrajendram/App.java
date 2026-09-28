@@ -8,7 +8,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -17,9 +20,11 @@ import javafx.stage.Stage;
  * JavaFX App
  */
 public class App extends Application {
-    
+    Label statusLabel = new Label();
     @Override
     public void start(Stage stage) {
+        
+        GridPane grid = new GridPane();
         String[] bags = {"Full Decorative", "Beaded", "Pirate Design",
         "Fringed", "Leather", "Plain"};
         
@@ -27,17 +32,38 @@ public class App extends Application {
         
         ListView<String> bag = new ListView<>(bagList);
         
-        ComboBox<Integer> numList = new ComboBox<>();
-        numList.getItems().addAll
+        String bagType = bag.getSelectionModel().getSelectedItem();
+        
+        ComboBox<String> numList = new ComboBox<>();
+        numList.getItems().addAll("1","2","3","4","5","6","7","8","9","10");
+        String amount = numList.getValue();
         
         Button orderBtn = new Button();
         Button clearBtn = new Button();
-
-        var javaVersion = SystemInfo.javaVersion();
-        var javafxVersion = SystemInfo.javafxVersion();
-
-        var label = new Label("Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".");
-        var scene = new Scene(new StackPane(label), 640, 480);
+        
+        RadioButton size1 = new RadioButton();
+        RadioButton size2 = new RadioButton();
+        RadioButton size3 = new RadioButton();
+        
+        ToggleGroup group = new ToggleGroup();
+        group.getToggles().addAll(size1,size2,size3);
+        
+        grid.add(orderBtn,0,0);
+        grid.add(clearBtn,0,1);
+        
+        grid.add(size1,1,0);
+        grid.add(size2,1,0);
+        grid.add(size3,1,0);
+        
+        grid.add(numList, 2, 3);
+        
+        
+        orderBtn.setOnAction(e -> {
+            System.out.println("You ordered " + amount + bagType);
+        });
+        
+        Scene scene = new Scene(grid,300,400);
+       
         stage.setScene(scene);
         stage.show();
     }
