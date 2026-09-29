@@ -11,6 +11,8 @@ import static javafx.application.Application.launch;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
@@ -22,6 +24,7 @@ public class App2 extends Application {
     @Override 
     public void start(Stage stage) {
         GridPane grid = new GridPane();
+        double subTotal = 0.0;
         
         ComboBox<String> Beverage = new ComboBox();
         ComboBox<String> Appetizer  = new ComboBox();      
@@ -33,10 +36,10 @@ public class App2 extends Application {
         mainCourse.getItems().addAll("Steak","Grilled Chicken","Chicken Alfredo","Turkey Club");
         Dessert.getItems().addAll("Apple Pie","Carrot Cake","Mud Cake","Pudding","Apple Crisp");
         
-        String bev = Beverage.getValue().toString();
-        String appet = Appetizer.getValue().toString();
-        String mainC = mainCourse.getValue().toString();
-        String dess = Dessert.getValue().toString();
+        Label txtSubtotal = new Label();
+        Label txtTax = new Label();
+        Label txtTip = new Label();
+        Label txtSumtotal = new Label();
         
         Map<String, Double> menuPrices = new HashMap<>();
         menuPrices.put("Coffee", 2.50);
@@ -72,22 +75,59 @@ public class App2 extends Application {
         grid.add(new Label("Beverage"),0,0);
         grid.add(Beverage,1,0);
         
-        grid.add(new Label("Appetizer"),0,0);
-        grid.add(Appetizer,1,0);
+        grid.add(new Label("Appetizer"),0,1);
+        grid.add(Appetizer,1,1);
         
-        grid.add(new Label("Main Course"),0,0);
-        grid.add(mainCourse,1,0);
+        grid.add(new Label("Main Course"),0,2);
+        grid.add(mainCourse,1,2);
         
-        grid.add(new Label("Dessert"),0,0);
-        grid.add(Dessert,1,0);
+        grid.add(new Label("Dessert"),0,3);
+        grid.add(Dessert,1,3);
         
+        Slider slider = new Slider(0 ,20 ,0);
+        
+        
+        
+        String selectedBev = Beverage.getValue();
+        
+        if ( selectedBev != null && menuPrices.containsKey(selectedBev)) {
+            double price = menuPrices.get(selectedBev);
+            subTotal += price;
+        }
+        
+        String selectedAppe = Appetizer.getValue();
+        if ( selectedAppe != null && menuPrices.containsKey(selectedAppe)) {
+            double price = menuPrices.get(selectedAppe);
+            subTotal += price;
+        }
+        String selectedMainc = mainCourse.getValue();
+        if ( selectedMainc != null && menuPrices.containsKey(selectedMainc)) {
+            double price = menuPrices.get(selectedMainc);
+            subTotal += price;
+        }
+        String selectedDess = Dessert.getValue();
+        if ( selectedDess != null && menuPrices.containsKey(selectedDess)) {
+            double price = menuPrices.get(selectedDess);
+            subTotal += price;
+        }
+        Double tax = subTotal * 0.13;
+        double tip = subTotal * (slider.getValue() / 100);
+        double totalSum = subTotal + tax + tip;
+        
+        txtSubtotal.setText("Sub Total: " + subTotal);
+        txtTax.setText("Tax: " + tax);
+        txtTip.setText("Tip: " + tip);
+        txtSumtotal.setText("Total Sum: " + totalSum);
+                
+        grid.add(slider,2,0);
         Scene scene = new Scene(grid, 640, 480);
         stage.setScene(scene);
         stage.show();
     }
-    private void calculateBill() {
+    private void calculate() {
     
     }
+    
  public static void main(String[] args) {
         launch(args);
     }   
