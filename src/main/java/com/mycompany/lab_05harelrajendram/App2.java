@@ -9,6 +9,7 @@ import java.util.Map;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
@@ -21,28 +22,112 @@ import javafx.stage.Stage;
  * @author 2534297
  */
 public class App2 extends Application {
+    private final Map<String, Double> menuPrices = new HashMap<>();
+    Label txtSubtotal;
+    Label txtTax;
+    Label txtTip;
+    Label txtSumtotal;
+    
+    private ComboBox<String> beverage;
+    private ComboBox<String> appetizer;
+    private ComboBox<String> mainCourse;
+    private ComboBox<String> dessert;
+    
+    private Slider slider;
+    
     @Override 
     public void start(Stage stage) {
         GridPane grid = new GridPane();
+        
+        menu();
+        
+        beverage = new ComboBox<>();
+        appetizer = new ComboBox<>();
+        mainCourse = new ComboBox<>();
+        dessert = new ComboBox<>(); 
+        
+        beverage.getItems().addAll("Coffee","Tea","Soft Drink","Water","Milk","Juice");
+        appetizer.getItems().addAll("Soup","Salad","Spring Rolls","Garlic Bread","Chips and Salsa");
+        mainCourse.getItems().addAll("Steak","Grilled Chicken","Chicken Alfredo","Turkey Club");
+        dessert.getItems().addAll("Apple Pie","Carrot Cake","Mud Cake","Pudding","Apple Crisp");
+        
+        Button clearBtn = new Button("Clear");
+        txtSubtotal = new Label("Sub Total: $0.00");
+        txtTax = new Label("Tax: $0.00");
+        txtTip = new Label("Tip: $0.00");
+        txtSumtotal = new Label("Total Sum: $0.00");
+        
+                
+        grid.add(new Label("Beverage"),0,0);
+        grid.add(beverage,1,0);
+        
+        grid.add(new Label("Appetizer"),0,1);
+        grid.add(appetizer,1,1);
+        
+        grid.add(new Label("Main Course"),0,2);
+        grid.add(mainCourse,1,2);
+        
+        grid.add(new Label("Dessert"),0,3);
+        grid.add(dessert,1,3);
+        
+        grid.add(txtSubtotal, 0, 5);
+        grid.add(txtTax, 0, 6);
+        grid.add(txtTip, 0, 7);
+        grid.add(txtSumtotal, 0, 8);
+        grid.add(clearBtn, 1, 9);
+        
+        slider = new Slider(0 ,20 ,0);
+        slider.setShowTickLabels(true);
+        
+        clearBtn.setOnAction(e -> {
+        beverage.setValue(null);
+        appetizer.setValue(null);
+        mainCourse.setValue(null);
+        dessert.setValue(null);
+        slider.setValue(0);
+            calculate();
+        });
+        
+        slider.valueProperty().addListener((obs, oldV, newV ) -> calculate());
+ 
+        beverage.setOnAction(e -> calculate());
+        appetizer.setOnAction(e -> calculate());
+        mainCourse.setOnAction(e -> calculate());
+        dessert.setOnAction(e -> calculate());
+        
+        
+        grid.add(slider,2,0);
+        Scene scene = new Scene(grid, 640, 480);
+        stage.setScene(scene);
+        stage.setTitle("Restaurant Bill Calculator");
+        stage.show();
+    }
+    private void calculate() {
         double subTotal = 0.0;
         
-        ComboBox<String> Beverage = new ComboBox();
-        ComboBox<String> Appetizer  = new ComboBox();      
-        ComboBox<String> mainCourse = new ComboBox();
-        ComboBox<String> Dessert = new ComboBox();  
+        subTotal += getItemPrice(beverage.getValue());
+        subTotal += getItemPrice(appetizer.getValue());
+        subTotal += getItemPrice(mainCourse.getValue());
+        subTotal += getItemPrice(dessert.getValue());
         
-        Beverage.getItems().addAll("Coffee","Tea","Soft Drink","Water","Milk","Juice");
-        Appetizer.getItems().addAll("Soup","Salad","Spring Rolls","Garlic Bread","Chips and Salsa");
-        mainCourse.getItems().addAll("Steak","Grilled Chicken","Chicken Alfredo","Turkey Club");
-        Dessert.getItems().addAll("Apple Pie","Carrot Cake","Mud Cake","Pudding","Apple Crisp");
+        Double tax = subTotal * 0.13;
+        double tip = subTotal * (slider.getValue() / 100.0);
+        double totalSum = subTotal + tax + tip;
         
-        Label txtSubtotal = new Label();
-        Label txtTax = new Label();
-        Label txtTip = new Label();
-        Label txtSumtotal = new Label();
-        
-        Map<String, Double> menuPrices = new HashMap<>();
-        menuPrices.put("Coffee", 2.50);
+        txtSubtotal.setText("Sub Total: " + subTotal);
+        txtTax.setText("Tax: " + tax);
+        txtTip.setText("Tip: " + tip);
+        txtSumtotal.setText("Total Sum: " + totalSum);
+    
+    }
+    private double getItemPrice(String selectedItem) {
+        if ( selectedItem != null && menuPrices.containsKey(selectedItem)) {
+            return menuPrices.get(selectedItem);
+        }
+        return 0.0;
+    }
+    private void menu() {
+    menuPrices.put("Coffee", 2.50);
         menuPrices.put("Tea", 2.00);
         menuPrices.put("Soft Drink", 1.75);
         menuPrices.put("Water", 2.95);
@@ -71,63 +156,7 @@ public class App2 extends Application {
         menuPrices.put("Mud Pie", 4.75);
         menuPrices.put("Pudding", 3.25);
         menuPrices.put("Apple Crisp", 5.98);
-                
-        grid.add(new Label("Beverage"),0,0);
-        grid.add(Beverage,1,0);
-        
-        grid.add(new Label("Appetizer"),0,1);
-        grid.add(Appetizer,1,1);
-        
-        grid.add(new Label("Main Course"),0,2);
-        grid.add(mainCourse,1,2);
-        
-        grid.add(new Label("Dessert"),0,3);
-        grid.add(Dessert,1,3);
-        
-        Slider slider = new Slider(0 ,20 ,0);
-        
-        
-        
-        String selectedBev = Beverage.getValue();
-        
-        if ( selectedBev != null && menuPrices.containsKey(selectedBev)) {
-            double price = menuPrices.get(selectedBev);
-            subTotal += price;
-        }
-        
-        String selectedAppe = Appetizer.getValue();
-        if ( selectedAppe != null && menuPrices.containsKey(selectedAppe)) {
-            double price = menuPrices.get(selectedAppe);
-            subTotal += price;
-        }
-        String selectedMainc = mainCourse.getValue();
-        if ( selectedMainc != null && menuPrices.containsKey(selectedMainc)) {
-            double price = menuPrices.get(selectedMainc);
-            subTotal += price;
-        }
-        String selectedDess = Dessert.getValue();
-        if ( selectedDess != null && menuPrices.containsKey(selectedDess)) {
-            double price = menuPrices.get(selectedDess);
-            subTotal += price;
-        }
-        Double tax = subTotal * 0.13;
-        double tip = subTotal * (slider.getValue() / 100);
-        double totalSum = subTotal + tax + tip;
-        
-        txtSubtotal.setText("Sub Total: " + subTotal);
-        txtTax.setText("Tax: " + tax);
-        txtTip.setText("Tip: " + tip);
-        txtSumtotal.setText("Total Sum: " + totalSum);
-                
-        grid.add(slider,2,0);
-        Scene scene = new Scene(grid, 640, 480);
-        stage.setScene(scene);
-        stage.show();
     }
-    private void calculate() {
-    
-    }
-    
  public static void main(String[] args) {
         launch(args);
     }   
